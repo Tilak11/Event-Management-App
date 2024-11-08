@@ -1,0 +1,73 @@
+# version: '3.8'
+# services:
+  
+#   event-creation-service:
+#     image: event-creation-service:latest
+#     build:
+#       context: ./event-creation-service
+#       dockerfile: Dockerfile
+#     ports:
+#       - "8081:8081"
+#     environment:
+#       SPRING_PROFILES_ACTIVE: docker
+ 
+
+#   registration-service:
+#     image: registration-service:latest
+#     build:
+#       context: ./event-registration-service
+#       dockerfile: Dockerfile
+#     ports:
+#       - "8082:8082"
+#     environment:
+#       SPRING_PROFILES_ACTIVE: docker
+#     depends_on:
+#       - event-creation-service
+
+#   finance-service:
+#     image: finance-service:latest
+#     build:
+#       context: ./event-finance-service
+#       dockerfile: Dockerfile
+#     ports:
+#       - "8083:8083"
+#     environment:
+#       SPRING_PROFILES_ACTIVE: docker
+#     depends_on:
+#       - event-creation-service
+
+version: '3.8'
+services:
+  event-creation-service:
+    build: ./event-creation-service
+    ports:
+      - "8081:8081"
+    networks:
+      - app-network
+
+  finance-service:
+    build: ./event-finance-service
+    ports:
+      - "8083:8083"
+    networks:
+      - app-network
+
+  registration-service:
+    build: ./event-registration-service
+    ports:
+      - "8082:8082"
+    networks:
+      - app-network
+  
+  frontend:
+    build:
+      context: ./event-management-frontend  # Correct path to frontend Dockerfile
+    ports:
+      - "3000:80"  # Expose frontend on localhost:3000
+    networks:
+      - app-network
+
+
+networks:
+  app-network:
+    driver: bridge
